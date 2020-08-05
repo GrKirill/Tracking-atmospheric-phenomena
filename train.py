@@ -49,10 +49,10 @@ def main(args=None):
 		pathlib.Path('./logs/tcnn').mkdir(parents=True, exist_ok=True)
 		from libs.models import TCNN, batch_data_generation
 		model = TCNN(input_shape, learning_rate, epochs)
-		#if args.train == 'True':
-		model.train('./data/df_tropical_cyclones.p')
-		#else:
-		#	print("You didn't even try :(")
+		if args.train == 'True':
+			model.train('./data/df_tropical_cyclones.p')
+		else:
+			print("You didn't even try :(")
 		
 if __name__ == '__main__':
 	main()
