@@ -18,7 +18,6 @@ def tqdm(*args, **kwargs):
 		for instance in list(tqdm_base._instances):
 			tqdm_base._decr_instances(instance)
 	return tqdm_base(*args, **kwargs)
-	
 
 def main(args=None):
 	if args is None:
@@ -90,7 +89,6 @@ def cuts(database_file, path_to_slp):
 			try:
 				idx = np.where(ds_datetimes == datetime_to_find)[0][0]
 				mslp_current = np.copy(mlp_ds['msl'][idx])
-				
 				#close dataset
 				mlp_ds.close()
 				rho = np.sqrt((lats_mesh-cyclones[name][i][1])**2 + (lons_mesh-cyclones[name][i][2])**2)
