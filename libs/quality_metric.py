@@ -13,13 +13,9 @@ def tqdm(*args, **kwargs):
 
 def MOTA(predicted_tracks, ground_truth_tracks, df, datetimes):
 	global_mota = []
-	
 	for key in tqdm(predicted_tracks.keys()):
-
 		motas_for_given_track = []
-		
 		track = predicted_tracks[key]
-		
 		start_time = str(df[(df['name'] == track[0][0]) & (df['index'] == track[0][1])]['datetime'].tolist()[0])
 		end_time = str(df[(df['name'] == track[-1][0]) & (df['index'] == track[-1][1])]['datetime'].tolist()[0])
 		
@@ -31,8 +27,7 @@ def MOTA(predicted_tracks, ground_truth_tracks, df, datetimes):
 			if j == np.datetime64(end_time): 
 				break
 				
-		indexes = [i for i in range(start_index, end_index + 1)]
-				
+		indexes = [i for i in range(start_index, end_index + 1)]		
 		alls = []
 		for i in range(len(datetimes)):
 			if ((datetimes[i] >= np.datetime64(start_time)) &  (datetimes[i] <= np.datetime64(end_time))):
@@ -59,21 +54,17 @@ def MOTA(predicted_tracks, ground_truth_tracks, df, datetimes):
 				for start_index_true,j in enumerate(datetimes):
 					if j == np.datetime64(start_true):
 						break
-
 				for end_index_true,j in enumerate(datetimes):
 					if j == np.datetime64(end_true):
 						break
-				
 				indexes_true = [i for i in range(start_index_true, end_index_true + 1)]
 				if len(indexes_true) == 0:
 					continue
 				commons, pred_inds, tr_inds = np.intersect1d(indexes,indexes_true, return_indices=True)
 				pred_ind = pred_inds[0]
 				tr_ind = tr_inds[0]
-
 			except:
 				continue
-			
 			# False Positives computing
 			try:
 				FP = 0
@@ -81,13 +72,9 @@ def MOTA(predicted_tracks, ground_truth_tracks, df, datetimes):
 					if track[pred_inds[pred_ind]][2:] != ground_truth_tracks[true_name][tr_inds[tr_ind]][2:]:      
 						FP += 1
 					pred_ind += 1 
-					tr_ind += 1
-					
+					tr_ind += 1	
 			except:
-				
 				FP = 0
-						
-			
 			# Misses computing       
 			if np.datetime64(end_time) > np.datetime64(end_true):
 				Miss = pred_inds[0]
@@ -95,9 +82,8 @@ def MOTA(predicted_tracks, ground_truth_tracks, df, datetimes):
 				Miss = pred_inds[0] + len(indexes_true) - len(indexes)
 	
 			mota = 1 - (FP + Miss)/len(ground_truth_tracks[true_name])
-			
 			motas_for_given_track.append(mota)
-		
+			
 		mean_mota = np.mean(motas_for_given_track)
 		global_mota.append(mean_mota)
 	
@@ -110,7 +96,6 @@ def calculate_distance(lat1, lon1,lat2, lon2):
 	lon1 = radians(lon1)
 	lat2 = radians(lat2)
 	lon2 = radians(lon2)
-
 	dlon = lon2 - lon1
 	dlat = lat2 - lat1
 
@@ -147,18 +132,13 @@ def MC_open_image_and_filtering_prerocess_for_NN(name, index):
 		WV_now_work_with = np.copy(IR_cyclone_track_data_scaled)
 		IR_now_work_with = np.copy(IR_cyclone_track_data_scaled)
 
-
 		WV_now_work_with_prep = preprocess_input(np.stack((WV_now_work_with*255,)*3, axis=-1))[:,:,0]
 		IR_now_work_with_prep = preprocess_input(np.stack((IR_now_work_with*255,)*3, axis=-1))[:,:,0]
-
 
 		WV_now_work_with_prep = WV_now_work_with_prep.reshape(1,200,200,1)
 		IR_now_work_with_prep = IR_now_work_with_prep.reshape(1,200,200,1)
 
-
 		concat_X1 = np.concatenate([IR_now_work_with_prep, WV_now_work_with_prep], axis=3)
-		
-
 		
 		
 	return concat_X1
@@ -173,10 +153,7 @@ def TC_open_image_and_filtering_prerocess_for_NN(name, index):
 		cyclone_track = pickle.load(fp)
 		cyclone_track = cyclone_track[index][0]
 		cyclone_track  = [cyclone_track [np.newaxis,:,:]]
-		#cyclone_track = np.concatenate(cyclone_track_data, axis=0)
 		cyclone_track = (cyclone_track[0]-c_min)/(c_max-c_min)
-		
 		expanded = np.asarray([np.expand_dims(x,-1) for x in cyclone_track])
-		
-		
+			
 	return expanded

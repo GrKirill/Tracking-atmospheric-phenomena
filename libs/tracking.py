@@ -325,7 +325,31 @@ def tracking_mesocyclones(df, model_name):
 						except:
 							break  			
 						
-		if model_name == "random_mc":
+	if model_name == "random_mc":
+		for global_timestamp in tqdm(range(1, len(datetimes)-1)):
+			current_srez = df[df['datetime'] == datetimes[global_timestamp]]
+			
+			new_keys = []
+
+			for find_new in current_srez.values:
+				isNew = True
+				for key in global_dict.keys():
+					for item in global_dict[key]:
+						if (item[2] == find_new[3]) & (item[3] == find_new[4]):
+							isNew = False
+							break
+				if isNew:
+					key_to_add = len(global_dict)
+					new_keys.append(key_to_add)
+					global_dict[key_to_add] = []
+					global_dict[key_to_add].append(list(find_new[1:]))
+
+			for new_key in new_keys:
+				
+				max_time_stamp = global_timestamp + 80
+				if max_time_stamp >= len(datetimes)-1:
+					max_time_stamp = len(datetimes)-2
+		
 			for timestamp in range(global_timestamp, max_time_stamp):
 				name,index,lat,long = global_dict[new_key][-1]
 				next_index = timestamp + 1
@@ -333,13 +357,12 @@ def tracking_mesocyclones(df, model_name):
 				for new_name, new_index, new_lat, new_long in df[df['datetime'] == datetimes[next_index]][['name', 'index', 'lat', 'long']].values: 
 					proba = np.random.uniform(0, 1)
 					probs[new_name] = [proba, new_index,  new_lat, new_long]
-
 				try:
 					target_name = max(probs.items(), key=lambda x: x[1][0])[0]
 					target_index, target_lat, target_long = probs[target_name][1:]
 					if probs[target_name][0] < 0.5:
 						break
-							
+								
 					global_dict[new_key].append([target_name, target_index, target_lat, target_long])
 				except:
 					break    
