@@ -31,7 +31,7 @@ def main(args=None):
 	
 	datasets_dir = os.path.join(os.path.abspath('./data/'), 'datasets')
 	try:
-		EnsureDirectoryExists(data_dir)
+		EnsureDirectoryExists(datasets_dir)
 	except:
 		print('datasets directory couldn`t be found and couldn`t be created:\n%s' % datasets_dir)
 		raise FileNotFoundError('datasets directory couldn`t be found and couldn`t be created:\n%s' % datasets_dir)
